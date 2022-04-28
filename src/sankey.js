@@ -240,6 +240,30 @@ export default function Sankey() {
       relaxRightToLeft(columns, alpha, beta);
       relaxLeftToRight(columns, alpha, beta);
     }
+    var remainingNodes = nodes,
+        nextNodes,
+        x = 0;
+
+    while (remainingNodes.length) {
+      nextNodes = [];
+      remainingNodes.forEach(function(node) {
+
+        if (node.xPos)
+            node.x = node.xPos;
+        else
+            node.x = x;
+        node.dx = nodeWidth;
+        node.sourceLinks.forEach(function(link) {
+          nextNodes.push(link.target);
+        });
+      });
+      remainingNodes = nextNodes;
+      ++x;
+    }
+
+    //
+    moveSinksRight(x);
+    scaleNodeBreadths((width - nodeWidth) / (x - 1));
   }
 
   // Reposition each node based on its incoming (target) links.
